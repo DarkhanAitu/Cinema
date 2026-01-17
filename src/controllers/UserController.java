@@ -1,5 +1,7 @@
-package controllers;
+package data.interfaces;
 
-import models.User;
-import controllers.interfaces.IUserController;
-import repositories.interfaces.IUserRepository;
+import java.sql.Connection;
+
+public interface IDatabase {
+    Connection getConnection();
+}
