@@ -2,7 +2,6 @@ package data.interfaces;
 
 import java.sql.Connection;
 
-public interface IDB {
+public interface IDatabase {
     Connection getConnection();
-    void close();
 }
