@@ -5,7 +5,7 @@ public class Movie {
     private String title;
     private int duration;
 
-    // Добавьте этот конструктор
+
     public Movie(int id, String title, int duration) {
         this.id = id;
         this.title = title;
