@@ -17,7 +17,6 @@ public class BookingController {
     private final Scanner scanner = new Scanner(System.in);
     private User currentUser;
 
-    // Метод для логина пользователя
     public void login() {
         System.out.print("Are you an admin or a customer? (admin/customer): ");
         String role = scanner.nextLine().trim().toLowerCase();
@@ -33,13 +32,11 @@ public class BookingController {
         System.out.println("Logged in as: " + currentUser.getUsername() + " (" + currentUser.getRole() + ")");
     }
 
-    // Получить роль текущего пользователя
     public String getCurrentUserRole() {
         if (currentUser == null) return "";
         return currentUser.getRole();
     }
 
-    // Показать все фильмы
     public void showMovies() {
         List<Movie> movies = movieRepo.getAll();
 
@@ -49,17 +46,16 @@ public class BookingController {
         }
 
         System.out.println("Available movies:");
-        for (Movie m : movies) {
-            System.out.println(
-                    m.getId() + " | " +
-                            m.getTitle() + " (" + m.getDuration() + " min) - $" +
-                            m.getPrice() +
-                            " | Category: " + m.getCategory()
-            );
-        }
+
+        movies.forEach(m -> System.out.println(
+                m.getId() + " | " +
+                        m.getTitle() + " (" + m.getDuration() + " min) - $" +
+                        m.getPrice() +
+                        " | Category: " + m.getCategory()
+        ));
     }
 
-    // Добавление фильма (только для админа)
+
     public void addMovie() {
         if (currentUser == null || !currentUser.getRole().equals("admin")) {
             System.out.println("Access denied. Only admins can add movies.");
@@ -75,7 +71,7 @@ public class BookingController {
         System.out.print("Price: ");
         double price = Double.parseDouble(scanner.nextLine());
 
-        System.out.print("Category (ACTION, COMEDY, DRAMA, HORROR, ROMANCE): ");
+        System.out.print("Category (ACTION, COMEDY, DRAMA, HORROR, ROMANCE ,SCI_FI): ");
         String categoryInput = scanner.nextLine().toUpperCase();
 
         MovieCategory category;
@@ -86,14 +82,12 @@ public class BookingController {
             category = MovieCategory.ACTION;
         }
 
-        // Создаем фильм через фабрику
         Movie movie = MovieFactory.createMovie(0, title, duration, price, category);
         movieRepo.addMovie(movie);
 
         System.out.println("Movie added successfully! Category: " + movie.getCategory());
     }
 
-    // Бронирование билета
     public void bookTicket() {
         System.out.print("Enter Movie ID to book: ");
         int movieId = Integer.parseInt(scanner.nextLine());
@@ -113,14 +107,18 @@ public class BookingController {
             return;
         }
 
-        double price = bookingRepo.getSeatPrice(seatId);
-        bookingRepo.createBooking(currentUser.getId(), movieId, seatId, price);
+        double basePrice = movieRepo.getPrice(movieId); // цена фильма
 
-        System.out.println("Ticket booked successfully! Price: $" + price);
+        double seatPrice = bookingRepo.getSeatPrice(seatId); // цена места: 150, 300, 500
+
+        double finalPrice = basePrice + seatPrice;
+
+        bookingRepo.createBooking(currentUser.getId(), movieId, seatId, finalPrice);
+
+        System.out.println("Ticket booked successfully! Price: $" + finalPrice);
+
     }
-
-    // Показать все брони для фильма
-    public void showFullBooking() {
+        public void showFullBooking() {
         System.out.print("Enter Movie ID to view all bookings: ");
         int movieId = Integer.parseInt(scanner.nextLine());
 

@@ -5,19 +5,11 @@ import models.MovieCategory;
 
 public class MovieFactory {
 
-    public static Movie createMovie(
-            int id,
-            String title,
-            int duration,
-            double price,
-            MovieCategory category) {
-        category = MovieCategory.OTHER;
+    public static Movie createMovie(int id, String title, int duration, double price, MovieCategory category) {
+        if (category == null) {
 
-        if (title.toLowerCase().contains("star") ||
-                title.toLowerCase().contains("interstellar")) {
-            category = MovieCategory.SCI_FI;
+            category = MovieCategory.OTHER;
         }
-
-        return new Movie(id, title, duration, price);
+        return new Movie(id, title, duration, price, category);
     }
 }

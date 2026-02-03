@@ -63,25 +63,19 @@ public class BookingRepository {
     }
 
     public double getSeatPrice(int seatId) {
-        String sql = "SELECT seat_type FROM seats WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql = "SELECT price FROM seats WHERE id = ?";
+        try (PreparedStatement ps = PostgresDB.getInstance().getConnection().prepareStatement(sql)) {
             ps.setInt(1, seatId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                String type = rs.getString("seat_type");
-                if (type == null) return 0;
-                return switch (type.toUpperCase()) {
-                    case "STANDARD" -> 150;
-                    case "COMFORT" -> 300;
-                    case "VIP" -> 500;
-                    default -> 0;
-                };
+                return rs.getDouble("price");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
+
 
     public void createBooking(int userId, int movieId, int seatId, double price) {
         try {

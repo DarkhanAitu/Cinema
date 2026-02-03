@@ -5,7 +5,7 @@ public class Movie {
     private String title;
     private int duration;
     private double price;
-    private MovieCategory category; // добавляем поле
+    private MovieCategory category;
 
     public Movie(int id, String title, int duration, double price) {
         this.id = id;

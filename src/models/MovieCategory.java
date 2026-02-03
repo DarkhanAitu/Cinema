@@ -5,5 +5,6 @@ public enum MovieCategory {
     ACTION,
     COMEDY,
     SCI_FI,
+    ROMANCE,
     OTHER
 }

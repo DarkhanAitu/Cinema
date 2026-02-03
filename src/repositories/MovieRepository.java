@@ -17,17 +17,18 @@ public class MovieRepository {
     }
 
     public void addMovie(Movie movie) {
-        String sql = "INSERT INTO movies(title, duration, price) VALUES (?, ?, ?)";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql = "INSERT INTO movies(title, duration, price, category) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = PostgresDB.getInstance().getConnection().prepareStatement(sql)) {
             ps.setString(1, movie.getTitle());
             ps.setInt(2, movie.getDuration());
             ps.setDouble(3, movie.getPrice());
+            ps.setString(4, movie.getCategory().name()); // <-- сохраняем категорию в базу
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     public double getPrice(int movieId) {
         String sql = "SELECT price FROM movies WHERE id = ?";
