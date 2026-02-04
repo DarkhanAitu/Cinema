@@ -20,20 +20,40 @@ public class BookingController {
     private User currentUser;
 
     public void login() {
-        System.out.print("Are you an admin or a customer? (1 = admin, 2 = customer): ");
-        String roleInput = scanner.nextLine().trim();
+        String roleInput;
 
-        String username = roleInput.equals("1") ? "admin_user" : "";
-        if (roleInput.equals("2")) {
+        while (true) {
+            System.out.print("Are you an admin or a customer? (1 = admin, 2 = customer): ");
+            roleInput = scanner.nextLine().trim();
+
+            if (roleInput.equals("1") || roleInput.equals("2")) {
+                break;
+            }
+
+            System.out.println("Invalid choice. Please enter 1 or 2.");
+        }
+
+        String username;
+        if (roleInput.equals("1")) {
+            username = "admin_user";
+        } else {
             System.out.print("Enter your name: ");
-            username = scanner.nextLine();
+            username = scanner.nextLine().trim();
+
+            if (username.isBlank()) {
+                username = "guest";
+            }
         }
 
         currentUser = UserFactory.createUser(roleInput, username);
 
-
-        System.out.println("Logged in as: " + currentUser.getUsername() + " (" + currentUser.getRole() + ")");
+        System.out.println(
+                "Logged in as: " +
+                        currentUser.getUsername() +
+                        " (" + currentUser.getRole() + ")"
+        );
     }
+
 
     public String getCurrentUserRole() {
         if (currentUser == null) return "";
