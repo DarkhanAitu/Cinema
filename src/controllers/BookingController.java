@@ -122,7 +122,6 @@ public class BookingController {
     public void showFullBooking() {
         System.out.print("Enter Movie ID to view all bookings: ");
         int movieId = Integer.parseInt(scanner.nextLine());
-
         bookingRepo.getFullBooking(currentUser.getId(), movieId);
     }
 }
