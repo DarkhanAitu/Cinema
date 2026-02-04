@@ -9,9 +9,9 @@ public class PostgresDB implements IDatabase {
     private Connection connection;
 
     private PostgresDB() {
-        String url = System.getenv("DB_URL");
-        String user = System.getenv("DB_USER");
-        String password = System.getenv("DB_PASSWORD");
+        String url = "jdbc:postgresql://localhost:5432/cinemadb";
+        String user = "postgres";
+        String password = "0000";
 
         try {
             connection = DriverManager.getConnection(

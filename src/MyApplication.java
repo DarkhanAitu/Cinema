@@ -1,27 +1,49 @@
 import controllers.BookingController;
+
 import java.util.Scanner;
 
 public class MyApplication {
+    public static void main(String[] args) {
+        BookingController controller = new BookingController();
+        Scanner scanner = new Scanner(System.in);
 
-    private final BookingController controller = new BookingController();
-    private final Scanner scanner = new Scanner(System.in);
+        controller.login();
 
-    public void start() {
         while (true) {
-            System.out.println("""
-                1. Show movies
-                2. Book ticket
-                3. Exit
-                """);
+            System.out.println("1. Show movies");
+            System.out.println("2. Book ticket");
+            System.out.println("3. Show full booking info");
 
-            int choice = scanner.nextInt();
-
-            if (choice == 1) {
-                controller.showMovies();
-            } else if (choice == 2) {
-                controller.bookTicket();
+            if (controller.getCurrentUserRole().equals("admin")) {
+                System.out.println("4. Add new movie");
+                System.out.println("5. Exit");
             } else {
-                break;
+                System.out.println("4. Exit");
+            }
+
+            int choice = Integer.parseInt(scanner.nextLine());
+
+            if (controller.getCurrentUserRole().equals("admin")) {
+                switch (choice) {
+                    case 1 -> controller.showMovies();
+                    case 2 -> controller.bookTicket();
+                    case 3 -> controller.showFullBooking();
+                    case 4 -> controller.addMovie();
+                    case 5 -> {
+                        System.exit(0);
+                    }
+                    default -> System.out.println("Invalid choice");
+                }
+            } else {
+                switch (choice) {
+                    case 1 -> controller.showMovies();
+                    case 2 -> controller.bookTicket();
+                    case 3 -> controller.showFullBooking();
+                    case 4 -> {
+                        System.exit(0);
+                    }
+                    default -> System.out.println("Invalid choice");
+                }
             }
         }
     }
