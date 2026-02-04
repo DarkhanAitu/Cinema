@@ -3,7 +3,7 @@ package models;
 public class Movie {
     private int id;
     private String title;
-    private int duration; мин
+    private int duration;
     private double price;
     private MovieCategory category;
 

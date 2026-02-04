@@ -11,12 +11,16 @@ public class BookingRepository {
 
     public void showSeatsWithStatus(int movieId) {
         String sql = """
-            SELECT s.id, s.seat_number, s.seat_type,
-                   CASE WHEN t.id IS NULL THEN 'FREE' ELSE 'BOOKED' END AS status
-            FROM seats s
-            LEFT JOIN tickets t ON s.id = t.seat_id AND t.movie_id = ?
-            ORDER BY s.id
-        """;
+        SELECT s.id, s.seat_number, s.seat_type,
+               CASE
+                   WHEN t.id IS NULL THEN 'FREE'
+                   ELSE 'BOOKED'
+               END AS status
+        FROM seats s
+        LEFT JOIN tickets t
+            ON s.id = t.seat_id AND t.movie_id = ?
+        ORDER BY s.id
+    """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, movieId);
@@ -24,11 +28,14 @@ public class BookingRepository {
 
             System.out.println("Seats:");
             while (rs.next()) {
-                int id = rs.getInt("id");
-                String number = rs.getString("seat_number");
-                String type = rs.getString("seat_type");
+                int seatId = rs.getInt("id");
+                String seatNumber = rs.getString("seat_number");
+                String seatType = rs.getString("seat_type");
                 String status = rs.getString("status");
-                System.out.println(id + ": " + number + " (" + type + ") - " + status);
+
+                double price = getSeatPrice(seatId);
+
+                System.out.println(seatId + ": " + seatNumber + " (" + seatType + ") - " + status + " - $" + price);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,25 +63,19 @@ public class BookingRepository {
     }
 
     public double getSeatPrice(int seatId) {
-        String sql = "SELECT seat_type FROM seats WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+        String sql = "SELECT price FROM seats WHERE id = ?";
+        try (PreparedStatement ps = PostgresDB.getInstance().getConnection().prepareStatement(sql)) {
             ps.setInt(1, seatId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                String type = rs.getString("seat_type");
-                if (type == null) return 0;
-                return switch (type.toUpperCase()) {
-                    case "STANDARD" -> 150;
-                    case "COMFORT" -> 300;
-                    case "VIP" -> 500;
-                    default -> 0;
-                };
+                return rs.getDouble("price");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
+
 
     public void createBooking(int userId, int movieId, int seatId, double price) {
         try {
@@ -151,7 +152,7 @@ public class BookingRepository {
             }
 
             if (!hasResult) {
-                System.out.println("No bookings found for this user and movie!");
+                System.out.println("No bookings found for this movie!");
             }
         } catch (SQLException e) {
             e.printStackTrace();

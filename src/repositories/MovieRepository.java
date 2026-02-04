@@ -8,51 +8,21 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
-
 public class MovieRepository {
 
-    private final Connection connection = PostgresDB.getInstance().getConnection();
-    public List<Movie> getAll() {
-        List<Movie> movies = new ArrayList<>();
-        String sql = """
-        SELECT m.id, m.title, m.duration, m.price,
-               c.id AS category_id, c.name AS category_name
-        FROM movies m
-        JOIN categories c ON m.category_id = c.id
-    """;
+    private final Connection connection;
 
-        try (Statement st = connection.createStatement()) {
-            ResultSet rs = st.executeQuery(sql);
-            while (rs.next()) {
-                MovieCategory category = new MovieCategory(
-                        rs.getInt("category_id"),
-                        rs.getString("category_name")
-                );
-
-                movies.add(new Movie(
-                        rs.getInt("id"),
-                        rs.getString("title"),
-                        rs.getInt("duration"),
-                        rs.getDouble("price"),
-                        category
-                ));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return movies;
+    public MovieRepository() {
+        this.connection = PostgresDB.getInstance().getConnection();
     }
 
-
     public void addMovie(Movie movie) {
-        String sql = "INSERT INTO movies(title, duration, price, category_id) VALUES (?, ?, ?, ?)";
-
-        try (PreparedStatement ps = connection.prepareStatement(sql)) { // <-- try с ресурсами
+        String sql = "INSERT INTO movies(title, duration, price, category) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = PostgresDB.getInstance().getConnection().prepareStatement(sql)) {
             ps.setString(1, movie.getTitle());
             ps.setInt(2, movie.getDuration());
             ps.setDouble(3, movie.getPrice());
-            ps.setInt(4, movie.getCategory().getId());
+            ps.setString(4, movie.getCategory().name()); // <-- сохраняем категорию в базу
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,12 +30,13 @@ public class MovieRepository {
     }
 
 
-
     public double getPrice(int movieId) {
         String sql = "SELECT price FROM movies WHERE id = ?";
+
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, movieId);
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
                 return rs.getDouble("price");
             }
@@ -73,5 +44,28 @@ public class MovieRepository {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    public List<Movie> getAll() {
+        List<Movie> movies = new ArrayList<>();
+        String sql = "SELECT id, title, duration, price, category FROM movies";
+
+        try (Statement st = connection.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Movie movie = new Movie(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getInt("duration"),
+                        rs.getDouble("price"),
+                        MovieCategory.valueOf(rs.getString("category")) // вот тут подтягиваем категорию
+                );
+                movies.add(movie);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
     }
 }
