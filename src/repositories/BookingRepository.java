@@ -152,7 +152,7 @@ public class BookingRepository {
             }
 
             if (!hasResult) {
-                System.out.println("No bookings found for this user and movie!");
+                System.out.println("No bookings found for this movie!");
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -118,12 +118,14 @@ public class BookingController {
         System.out.println("Ticket booked successfully! Price: $" + finalPrice);
 
     }
-        public void showFullBooking() {
+
+    public void showFullBooking() {
         System.out.print("Enter Movie ID to view all bookings: ");
         int movieId = Integer.parseInt(scanner.nextLine());
 
         bookingRepo.getFullBooking(currentUser.getId(), movieId);
     }
 }
+
 
 
