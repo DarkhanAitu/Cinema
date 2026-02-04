@@ -1,7 +1,7 @@
 package repositories;
 
 import data.PostgresDB;
-import models.Category;
+import models.MovieCategory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,14 +14,14 @@ public class CategoryRepository {
 
     private final Connection connection = PostgresDB.getInstance().getConnection();
 
-    public List<Category> getAll() {
-        List<Category> categories = new ArrayList<>();
+    public List<MovieCategory> getAll() {
+        List<MovieCategory> categories = new ArrayList<>();
         String sql = "SELECT id, name FROM categories ORDER BY id";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                categories.add(new Category(rs.getInt("id"), rs.getString("name")));
+                categories.add(new MovieCategory(rs.getInt("id"), rs.getString("name")));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -29,13 +29,13 @@ public class CategoryRepository {
         return categories;
     }
 
-    public Category getById(int id) {
+    public MovieCategory getById(int id) {
         String sql = "SELECT * FROM categories WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return new Category(rs.getInt("id"), rs.getString("name"));
+                return new MovieCategory(rs.getInt("id"), rs.getString("name"));
             }
         } catch (SQLException e) {
             e.printStackTrace();

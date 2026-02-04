@@ -5,9 +5,9 @@ public class Movie {
     private String title;
     private int duration; // мин
     private double price; // цена билета
-    private Category category;
+    private MovieCategory category;
 
-    public Movie(int id, String title, int duration, double price, Category category) {
+    public Movie(int id, String title, int duration, double price, MovieCategory category) {
         this.id = id;
         this.title = title;
         this.duration = duration;
@@ -20,7 +20,7 @@ public class Movie {
     public String getTitle() { return title; }
     public int getDuration() { return duration; }
     public double getPrice() { return price; }
-    public Category getCategory() { return category; }
+    public MovieCategory getCategory() { return category; }
 
     @Override
     public String toString() {

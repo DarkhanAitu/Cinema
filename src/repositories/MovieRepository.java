@@ -2,7 +2,7 @@ package repositories;
 
 import data.PostgresDB;
 import models.Movie;
-import models.Category;
+import models.MovieCategory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class MovieRepository {
         try (Statement st = connection.createStatement()) {
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
-                Category category = new Category(
+                MovieCategory category = new MovieCategory(
                         rs.getInt("category_id"),
                         rs.getString("category_name")
                 );

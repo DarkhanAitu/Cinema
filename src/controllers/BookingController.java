@@ -4,8 +4,8 @@ import models.Movie;
 import models.User;
 import repositories.BookingRepository;
 import repositories.MovieRepository;
-import factories.UserFactory;
-import models.Category;
+import Factories.MovieFactory;
+import models.MovieCategory;
 import repositories.CategoryRepository;
 
 
@@ -45,7 +45,7 @@ public class BookingController {
             }
         }
 
-        currentUser = UserFactory.createUser(roleInput, username);
+        currentUser = MovieFactory.createUser(roleInput, username);
 
         System.out.println(
                 "Logged in as: " +
@@ -88,7 +88,7 @@ public class BookingController {
             return;
         }
 
-        List<Category> categories = categoryRepo.getAll();
+        List<MovieCategory> categories = categoryRepo.getAll();
         if (categories.isEmpty()) {
             System.out.println("No categories available! Add categories first.");
             return;
@@ -98,7 +98,7 @@ public class BookingController {
         categories.forEach(c -> System.out.println(c.getId() + " | " + c.getName()));
 
 
-        Category category = null;
+        MovieCategory category = null;
         while (category == null) {
             System.out.print("Choose category ID: ");
             int catId;
