@@ -3,8 +3,8 @@ package models;
 public class Movie {
     private int id;
     private String title;
-    private int duration; // мин
-    private double price; // цена билета
+    private int duration; мин
+    private double price;
     private MovieCategory category;
 
     public Movie(int id, String title, int duration, double price, MovieCategory category) {
@@ -15,7 +15,6 @@ public class Movie {
         this.category = category;
     }
 
-    // Геттеры
     public int getId() { return id; }
     public String getTitle() { return title; }
     public int getDuration() { return duration; }
