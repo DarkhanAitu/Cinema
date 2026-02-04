@@ -21,10 +21,9 @@ public class Movie {
     public double getPrice() { return price; }
     public MovieCategory getCategory() { return category; }
 
-    @Override
-    public String toString() {
-        return id + " | " + title +
-                " (" + duration + " min) - $" + price +
-                " | Category: " + (category != null ? category.getName() : "None");
-    }
+    public void setId(int id) { this.id = id; }
+    public void setTitle(String title) { this.title = title; }
+    public void setDuration(int duration) { this.duration = duration; }
+    public void setPrice(double price) { this.price = price; }
+    public void setCategory(MovieCategory category) { this.category = category; }
 }
