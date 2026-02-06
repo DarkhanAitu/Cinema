@@ -22,28 +22,43 @@ public class BookingController {
 
     public void login() {
         System.out.print("Are you an admin or a customer? (admin/customer): ");
-        String roleInput = scanner.nextLine().trim().toLowerCase();
+        String role = scanner.nextLine().trim().toLowerCase();
 
-        System.out.print("Enter your name: ");
-        String name = scanner.nextLine().trim();
+        UserRepository userRepo = new UserRepository();
 
-        User user = userRepo.findByUsername(name);
+        if (role.equals("admin")) {
+            System.out.print("Enter admin name: ");
+            String name = scanner.nextLine().trim();
 
-        if (user == null) {
-            System.out.println("User not found. Access denied.");
-            System.exit(0);
+            User user = userRepo.findByUsername(name);
+
+            if (user == null || !user.getRole().equalsIgnoreCase("admin")) {
+                System.out.println("Admin not found. Access denied.");
+                return;
+            }
+
+            currentUser = user;
+            System.out.println("Logged in as: " + currentUser.getUsername() + " (ADMIN)");
+
+        } else {
+            System.out.print("Enter your name: ");
+            String name = scanner.nextLine().trim();
+
+            User user = userRepo.findByUsername(name);
+
+            if (user == null) {
+                User newUser = new User();
+                newUser.setUsername(name);
+                newUser.setRole("customer");
+                userRepo.addUser(newUser);
+
+                user = userRepo.findByUsername(name);
+            }
+
+
+            currentUser = user;
+            System.out.println("Logged in as: " + currentUser.getUsername() + " (CUSTOMER)");
         }
-
-        if (!user.getRole().equalsIgnoreCase(roleInput)) {
-            System.out.println("Access denied. Role mismatch.");
-            System.exit(0);
-        }
-
-        currentUser = user;
-        System.out.println(
-                "Logged in as: " + currentUser.getUsername() +
-                        " (" + currentUser.getRole() + ")"
-        );
     }
 
 
@@ -51,32 +66,6 @@ public class BookingController {
         if (currentUser == null) return "";
         return currentUser.getRole();
     }
-
-    public void addAdmin() {
-        if (currentUser == null || !currentUser.getRole().equalsIgnoreCase("admin")) {
-            System.out.println("Access denied. Only admins can add new admins.");
-            return;
-        }
-
-        System.out.print("Enter new admin's name: ");
-        String name = scanner.nextLine().trim();
-
-        if (userRepo.findByUsername(name) != null) {
-            System.out.println("User with this name already exists!");
-            return;
-        }
-
-        User newAdmin = new User();
-        newAdmin.setUsername(name);
-        newAdmin.setRole("admin");
-
-        if (userRepo.addUser(newAdmin)) {
-            System.out.println("New admin added successfully: " + name);
-        } else {
-            System.out.println("Failed to add new admin. Try again.");
-        }
-    }
-
 
     public void showMovies() {
         List<Movie> movies = movieRepo.getAll();
@@ -158,6 +147,31 @@ public class BookingController {
 
         System.out.println("Ticket booked successfully! Price: $" + finalPrice);
 
+    }
+
+    public void addAdmin() {
+        if (currentUser == null || !currentUser.getRole().equalsIgnoreCase("admin")) {
+            System.out.println("Access denied. Only admins can add new admins.");
+            return;
+        }
+
+        System.out.print("Enter new admin's name: ");
+        String name = scanner.nextLine().trim();
+
+        if (userRepo.findByUsername(name) != null) {
+            System.out.println("User with this name already exists!");
+            return;
+        }
+
+        User newAdmin = new User();
+        newAdmin.setUsername(name);
+        newAdmin.setRole("admin");
+
+        if (userRepo.addUser(newAdmin)) {
+            System.out.println("New admin added successfully: " + name);
+        } else {
+            System.out.println("Failed to add new admin. Try again.");
+        }
     }
 
     public void showFullBooking() {
