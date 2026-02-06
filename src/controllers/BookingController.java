@@ -44,8 +44,19 @@ public class BookingController {
             System.out.print("Enter your name: ");
             String name = scanner.nextLine().trim();
 
+            User user = userRepo.findByUsername(name);
 
-            currentUser = new User(0, name, "customer");
+            if (user == null) {
+                User newUser = new User();
+                newUser.setUsername(name);
+                newUser.setRole("customer");
+                userRepo.addUser(newUser);
+
+                user = userRepo.findByUsername(name);
+            }
+
+
+            currentUser = user;
             System.out.println("Logged in as: " + currentUser.getUsername() + " (CUSTOMER)");
         }
     }
@@ -136,6 +147,31 @@ public class BookingController {
 
         System.out.println("Ticket booked successfully! Price: $" + finalPrice);
 
+    }
+
+    public void addAdmin() {
+        if (currentUser == null || !currentUser.getRole().equalsIgnoreCase("admin")) {
+            System.out.println("Access denied. Only admins can add new admins.");
+            return;
+        }
+
+        System.out.print("Enter new admin's name: ");
+        String name = scanner.nextLine().trim();
+
+        if (userRepo.findByUsername(name) != null) {
+            System.out.println("User with this name already exists!");
+            return;
+        }
+
+        User newAdmin = new User();
+        newAdmin.setUsername(name);
+        newAdmin.setRole("admin");
+
+        if (userRepo.addUser(newAdmin)) {
+            System.out.println("New admin added successfully: " + name);
+        } else {
+            System.out.println("Failed to add new admin. Try again.");
+        }
     }
 
     public void showFullBooking() {
