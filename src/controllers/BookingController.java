@@ -22,28 +22,32 @@ public class BookingController {
 
     public void login() {
         System.out.print("Are you an admin or a customer? (admin/customer): ");
-        String roleInput = scanner.nextLine().trim().toLowerCase();
+        String role = scanner.nextLine().trim().toLowerCase();
 
-        System.out.print("Enter your name: ");
-        String name = scanner.nextLine().trim();
+        UserRepository userRepo = new UserRepository();
 
-        User user = userRepo.findByUsername(name);
+        if (role.equals("admin")) {
+            System.out.print("Enter admin name: ");
+            String name = scanner.nextLine().trim();
 
-        if (user == null) {
-            System.out.println("User not found. Access denied.");
-            System.exit(0);
+            User user = userRepo.findByUsername(name);
+
+            if (user == null || !user.getRole().equalsIgnoreCase("admin")) {
+                System.out.println("Admin not found. Access denied.");
+                return;
+            }
+
+            currentUser = user;
+            System.out.println("Logged in as: " + currentUser.getUsername() + " (ADMIN)");
+
+        } else {
+            System.out.print("Enter your name: ");
+            String name = scanner.nextLine().trim();
+
+
+            currentUser = new User(0, name, "customer");
+            System.out.println("Logged in as: " + currentUser.getUsername() + " (CUSTOMER)");
         }
-
-        if (!user.getRole().equalsIgnoreCase(roleInput)) {
-            System.out.println("Access denied. Role mismatch.");
-            System.exit(0);
-        }
-
-        currentUser = user;
-        System.out.println(
-                "Logged in as: " + currentUser.getUsername() +
-                        " (" + currentUser.getRole() + ")"
-        );
     }
 
 
