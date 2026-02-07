@@ -24,18 +24,22 @@ public class BookingController {
         System.out.print("Are you an admin or a customer? (admin/customer): ");
         String role = scanner.nextLine().trim().toLowerCase();
 
-        UserRepository userRepo = new UserRepository();
-
         if (role.equals("admin")) {
-            System.out.print("Enter admin name: ");
-            String name = scanner.nextLine().trim();
+            System.out.print("Enter admin username: ");
+            String username = scanner.nextLine().trim();
 
-            User user = userRepo.findByUsername(name);
+            System.out.print("Enter admin password: ");
+            String password = scanner.nextLine().trim();
 
-            if (user == null || !user.getRole().equalsIgnoreCase("admin")) {
-                System.out.println("Admin not found. Access denied.");
+            User user = userRepo.findByUsername(username);
+
+            if (user == null
+                    || !user.getRole().equalsIgnoreCase("admin")
+                    || !user.getPassword().equals(password)) {
+                System.out.println("Invalid username or password. Access denied.");
                 return;
             }
+
 
             currentUser = user;
             System.out.println("Logged in as: " + currentUser.getUsername() + " (ADMIN)");
@@ -54,7 +58,6 @@ public class BookingController {
 
                 user = userRepo.findByUsername(name);
             }
-
 
             currentUser = user;
             System.out.println("Logged in as: " + currentUser.getUsername() + " (CUSTOMER)");
@@ -155,20 +158,24 @@ public class BookingController {
             return;
         }
 
-        System.out.print("Enter new admin's name: ");
-        String name = scanner.nextLine().trim();
+        System.out.print("Enter new admin's username: ");
+        String username = scanner.nextLine().trim();
 
-        if (userRepo.findByUsername(name) != null) {
-            System.out.println("User with this name already exists!");
+        if (userRepo.findByUsername(username) != null) {
+            System.out.println("User with this username already exists!");
             return;
         }
 
+        System.out.print("Enter new admin's password: ");
+        String password = scanner.nextLine().trim();
+
         User newAdmin = new User();
-        newAdmin.setUsername(name);
+        newAdmin.setUsername(username);
         newAdmin.setRole("admin");
+        newAdmin.setPassword(password);  // Set the password for the new admin
 
         if (userRepo.addUser(newAdmin)) {
-            System.out.println("New admin added successfully: " + name);
+            System.out.println("New admin added successfully: " + username);
         } else {
             System.out.println("Failed to add new admin. Try again.");
         }
