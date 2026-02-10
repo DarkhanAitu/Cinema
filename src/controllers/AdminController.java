@@ -10,6 +10,7 @@ import repositories.MovieRepository;
 import repositories.UserRepository;
 
 import java.util.Scanner;
+import java.util.List;
 
 public class AdminController implements IAdminController {
 
@@ -85,5 +86,83 @@ public class AdminController implements IAdminController {
 
         bookingRepo.getFullBookingByMovie(movieId);
     }
+    public void editMovie() {
+        System.out.print("Enter Movie ID to edit: ");
+        int movieId;
+        try {
+            movieId = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid Movie ID!");
+            return;
+        }
+
+        List<Movie> allMovies = movieRepo.getAll();
+        Movie movie = allMovies.stream().filter(m -> m.getId() == movieId).findFirst().orElse(null);
+        if (movie == null) {
+            System.out.println("Movie not found!");
+            return;
+        }
+
+        System.out.println("Editing movie: " + movie.getTitle());
+
+        System.out.println("What do you want to edit?");
+        System.out.println("1. Title");
+        System.out.println("2. Duration");
+        System.out.println("3. Price");
+        System.out.println("4. Category");
+        System.out.println("5. Cancel");
+
+        int choice;
+        try {
+            choice = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input!");
+            return;
+        }
+
+        String newTitle = null;
+        Integer newDuration = null;
+        Double newPrice = null;
+        MovieCategory newCategory = null;
+
+        switch (choice) {
+            case 1 -> {
+                System.out.print("Enter new title: ");
+                newTitle = scanner.nextLine().trim();
+            }
+            case 2 -> {
+                System.out.print("Enter new duration (minutes): ");
+                newDuration = Integer.parseInt(scanner.nextLine());
+            }
+            case 3 -> {
+                System.out.print("Enter new price: ");
+                newPrice = Double.parseDouble(scanner.nextLine());
+            }
+            case 4 -> {
+                System.out.print("Enter new category (ACTION, COMEDY, DRAMA, HORROR, ROMANCE, SCI_FI, OTHER): ");
+                try {
+                    newCategory = MovieCategory.valueOf(scanner.nextLine().toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid category, keeping current.");
+                }
+            }
+            case 5 -> {
+                System.out.println("Edit canceled.");
+                return;
+            }
+            default -> {
+                System.out.println("Invalid choice.");
+                return;
+            }
+        }
+
+        boolean updated = movieRepo.updateMovie(movieId, newTitle, newDuration, newPrice, newCategory);
+        if (updated) {
+            System.out.println("Movie updated successfully!");
+        } else {
+            System.out.println("Failed to update movie.");
+        }
+    }
+
 
 }

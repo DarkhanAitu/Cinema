@@ -216,4 +216,41 @@ public class BookingRepository {
             e.printStackTrace();
         }
     }
+    public boolean cancelBooking(int bookingId, int userId) {
+        String checkSql = "SELECT id FROM bookings WHERE id = ? AND user_id = ?";
+        try (PreparedStatement checkPs = connection.prepareStatement(checkSql)) {
+            checkPs.setInt(1, bookingId);
+            checkPs.setInt(2, userId);
+            ResultSet rs = checkPs.executeQuery();
+
+            if (!rs.next()) {
+                return false; // Booking doesn't exist or doesn't belong to this user
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        try {
+            // Delete tickets first (foreign key dependency)
+            String deleteTickets = "DELETE FROM tickets WHERE booking_id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteTickets)) {
+                ps.setInt(1, bookingId);
+                ps.executeUpdate();
+            }
+
+            // Then delete booking
+            String deleteBooking = "DELETE FROM bookings WHERE id = ?";
+            try (PreparedStatement ps = connection.prepareStatement(deleteBooking)) {
+                ps.setInt(1, bookingId);
+                ps.executeUpdate();
+            }
+
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }

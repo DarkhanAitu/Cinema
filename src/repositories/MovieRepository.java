@@ -92,6 +92,45 @@ public class MovieRepository {
 
         return movies;
     }
+    public boolean updateMovie(int movieId, String title, Integer duration, Double price, MovieCategory category) {
+        StringBuilder sql = new StringBuilder("UPDATE movies SET ");
+        List<Object> params = new ArrayList<>();
+
+        if (title != null) {
+            sql.append("title = ?, ");
+            params.add(title);
+        }
+        if (duration != null) {
+            sql.append("duration = ?, ");
+            params.add(duration);
+        }
+        if (price != null) {
+            sql.append("price = ?, ");
+            params.add(price);
+        }
+        if (category != null) {
+            sql.append("category = ?, ");
+            params.add(category.name());
+        }
+
+        if (params.isEmpty()) return false;
+        sql.setLength(sql.length() - 2);
+
+        sql.append(" WHERE id = ?");
+        params.add(movieId);
+
+        try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+
+            int affected = ps.executeUpdate();
+            return affected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
 }
