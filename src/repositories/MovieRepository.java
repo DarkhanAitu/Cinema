@@ -68,4 +68,30 @@ public class MovieRepository {
         }
         return movies;
     }
+    public List<Movie> getByCategory(MovieCategory category) {
+        List<Movie> movies = new ArrayList<>();
+
+        String sql = "SELECT id, title, duration, price, category FROM movies WHERE category = ?";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, category.name());
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                movies.add(new Movie(
+                        rs.getInt("id"),
+                        rs.getString("title"),
+                        rs.getInt("duration"),
+                        rs.getDouble("price"),
+                        MovieCategory.valueOf(rs.getString("category"))
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return movies;
+    }
+
+
 }

@@ -71,15 +71,40 @@ public class BookingController {
     }
 
     public void showMovies() {
-        List<Movie> movies = movieRepo.getAll();
+        System.out.println("""
+        Choose category:
+        1. All movies
+        2. SCI_FI
+        3. COMEDY
+        4. ACTION
+        5. DRAMA
+        6. ROMANCE
+        7. OTHER
+        """);
+
+        int choice = Integer.parseInt(scanner.nextLine());
+        List<Movie> movies;
+
+        switch (choice) {
+            case 1 -> movies = movieRepo.getAll();
+            case 2 -> movies = movieRepo.getByCategory(MovieCategory.SCI_FI);
+            case 3 -> movies = movieRepo.getByCategory(MovieCategory.COMEDY);
+            case 4 -> movies = movieRepo.getByCategory(MovieCategory.ACTION);
+            case 5 -> movies = movieRepo.getByCategory(MovieCategory.DRAMA);
+            case 6 -> movies = movieRepo.getByCategory(MovieCategory.ROMANCE);
+            case 7 -> movies = movieRepo.getByCategory(MovieCategory.OTHER);
+            default -> {
+                System.out.println("Invalid option!");
+                return;
+            }
+        }
 
         if (movies.isEmpty()) {
-            System.out.println("No movies available.");
+            System.out.println("No movies found.");
             return;
         }
 
         System.out.println("Available movies:");
-
         movies.forEach(m -> System.out.println(
                 m.getId() + " | " +
                         m.getTitle() + " (" + m.getDuration() + " min) - $" +
@@ -87,6 +112,7 @@ public class BookingController {
                         " | Category: " + m.getCategory()
         ));
     }
+
 
 
     public void addMovie() {

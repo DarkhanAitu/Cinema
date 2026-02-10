@@ -2,16 +2,18 @@ package repositories;
 
 import data.PostgresDB;
 import models.User;
+import repositories.interfaces.IUserRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserRepository {
+public class UserRepository implements IUserRepository {
 
     private final Connection connection = PostgresDB.getInstance().getConnection();
 
+    @Override
     public User findByUsername(String username) {
         String sql = "SELECT id, username, role, password FROM users WHERE username = ?";
 
@@ -26,7 +28,6 @@ public class UserRepository {
                         rs.getString("role"),
                         rs.getString("password")
                 );
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -34,13 +35,14 @@ public class UserRepository {
         return null;
     }
 
+    @Override
     public boolean addUser(User user) {
         String sql = "INSERT INTO users(username, role, password) VALUES (?, ?, ?)";
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, user.getUsername());
             ps.setString(2, user.getRole());
-            ps.setString(3, user.getPassword());  // Save password as well
+            ps.setString(3, user.getPassword());
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -48,5 +50,4 @@ public class UserRepository {
             return false;
         }
     }
-
 }
