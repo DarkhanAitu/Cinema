@@ -30,8 +30,9 @@ public class MyApplication {
             if (loginController.getCurrentUserRole().equalsIgnoreCase("admin")) {
                 System.out.println("2. Show full booking info");
                 System.out.println("3. Add new movie");
-                System.out.println("4. Add new admin");
-                System.out.println("5. Exit");
+                System.out.println("4. Edit movie");
+                System.out.println("5. Add new admin");
+                System.out.println("6. Exit");
             } else {
                 System.out.println("2. Show my bookings");
                 System.out.println("3. Book ticket");
@@ -51,12 +52,14 @@ public class MyApplication {
             if (loginController.getCurrentUserRole().equalsIgnoreCase("admin")) {
                 switch (choice) {
                     case 1 -> bookingController.showMovies();
-                    case 2 -> adminController.showFullBookingForMovie();
+                    case 2 -> adminController.showFullBookingForMovie(); // already in your AdminController
                     case 3 -> adminController.addMovie();
-                    case 4 -> adminController.addAdmin();
-                    case 5 -> System.exit(0);
+                    case 4 -> adminController.editMovie();
+                    case 5 -> adminController.addAdmin();
+                    case 6 -> System.exit(0);
                     default -> System.out.println("Invalid choice");
                 }
+
             } else {
                 switch (choice) {
                     case 1 -> bookingController.showMovies();
