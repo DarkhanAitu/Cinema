@@ -110,4 +110,35 @@ public class BookingController {
 
         bookingRepo.getFullBooking(currentUser.getId(), movieId);
     }
+    public void cancelBooking() {
+        System.out.print("Enter Movie ID of the booking you want to cancel: ");
+        int movieId;
+        try {
+            movieId = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid Movie ID!");
+            return;
+        }
+
+        // First, show customer's bookings for that movie
+        System.out.println("Your bookings for this movie:");
+        bookingRepo.getFullBooking(currentUser.getId(), movieId);
+
+        System.out.print("Enter Booking ID you want to cancel: ");
+        int bookingId;
+        try {
+            bookingId = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid Booking ID!");
+            return;
+        }
+
+        boolean success = bookingRepo.cancelBooking(bookingId, currentUser.getId());
+        if (success) {
+            System.out.println("Booking canceled successfully.");
+        } else {
+            System.out.println("Failed to cancel booking. Make sure the Booking ID is correct.");
+        }
+    }
+
 }

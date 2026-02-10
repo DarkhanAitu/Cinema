@@ -35,7 +35,8 @@ public class MyApplication {
             } else {
                 System.out.println("2. Show my bookings");
                 System.out.println("3. Book ticket");
-                System.out.println("4. Exit");
+                System.out.println("4. Cancel booking");
+                System.out.println("5. Exit");
             }
 
 
@@ -61,7 +62,8 @@ public class MyApplication {
                     case 1 -> bookingController.showMovies();
                     case 2 -> bookingController.showMyBookings();
                     case 3 -> bookingController.bookTicket();
-                    case 4 -> System.exit(0);
+                    case 4 -> bookingController.cancelBooking();
+                    case 5 -> System.exit(0);
                     default -> System.out.println("Invalid choice");
                 }
             }
