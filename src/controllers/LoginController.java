@@ -120,4 +120,17 @@ public class LoginController implements ILoginController {
     public User getCurrentUser() {
         return currentUser;
     }
+    public void logout() {
+        if (currentUser != null) {
+            System.out.println("User " + currentUser.getUsername() + " logged out successfully.");
+            currentUser = null;
+        } else {
+            System.out.println("No user is currently logged in.");
+        }
+    }
+
+    public boolean isLoggedIn() {
+        return currentUser != null;
+    }
+
 }
