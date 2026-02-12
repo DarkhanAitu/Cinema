@@ -67,7 +67,7 @@ public class MyApplication {
                         case 7 -> System.exit(0);
                         default -> System.out.println("Invalid choice");
                     }
-                } else { // customer
+                } else {
                     switch (choice) {
                         case 1 -> bookingController.showMovies();
                         case 2 -> bookingController.showMyBookings();

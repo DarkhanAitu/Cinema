@@ -120,7 +120,6 @@ public class BookingController {
             return;
         }
 
-        // First, show customer's bookings for that movie
         System.out.println("Your bookings for this movie:");
         bookingRepo.getFullBooking(currentUser.getId(), movieId);
 
